@@ -3,15 +3,16 @@ import sys
 
 from dataclasses import dataclass
 
-from catboost import CatBoostClassifier
-from sklearn.ensemble import (AdaBoostClassifier,
-                              GradientBoostingClassifier,
-                              RandomForestClassifier)
+from catboost import CatBoostRegressor
+from sklearn.ensemble import (AdaBoostRegressor,
+                              GradientBoostingRegressor,
+                              RandomForestRegressor)
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
+from sklearn.model_selection import GridSearchCV
 
 from sklearn.metrics import r2_score
 
@@ -36,60 +37,66 @@ class ModelTrainer:
             X_test, y_test = test_array[:,:-1], test_array[:,-1]
 
             models = {
-                "Random Forest": RandomForestClassifier(
-                    n_estimators=200,
-                    max_depth=10,
-                    min_samples_split=5,
-                    min_samples_leaf=2,
-                    random_state=42
-                ),
+                        "Random Forest": RandomForestRegressor(),
+                        "Decision Tree": DecisionTreeRegressor(),
+                        "Gradient Boosting": GradientBoostingRegressor(),
+                        "Logistic Regression": LogisticRegression(),
+                        "KNN Regressor": KNeighborsRegressor(),
+                        "XGBoost Regressor": XGBRegressor(objective='reg:squarederror'),
+                        "CatBoost Regressor": CatBoostRegressor(verbose=False),
+                        "AdaBoost Regressor": AdaBoostRegressor(),
+                    }
+            
+            params = {
+                "Random Forest": {
+                    "n_estimators": [100, 200, 300],
+                    "max_depth": [6, 10, None],
+                    "min_samples_split": [2, 5, 10],
+                },
 
-                "Decision Tree": DecisionTreeClassifier(
-                    criterion="gini",
-                    max_depth=8,
-                    min_samples_split=4
-                ),
+                "Decision Tree": {
+                    "max_depth": [4, 6, 8, 10],
+                    "criterion": ["squared_error", "friedman_mse"],
+                },
 
-                "Gradient Boosting": GradientBoostingClassifier(
-                    learning_rate=0.05,
-                    n_estimators=200,
-                    max_depth=3
-                ),
+                "Gradient Boosting": {
+                    "learning_rate": [0.01, 0.05, 0.1],
+                    "n_estimators": [100, 200],
+                    "max_depth": [3, 5],
+                },
 
-                "Logistic Regression": LogisticRegression(
-                    max_iter=200,
-                    solver="lbfgs"
-                ),
+                "Logistic Regression": {
+                    "max_iter": [100, 200, 300],
+                    "solver": ["lbfgs"],
+                },
 
-                "KNN Classifier": KNeighborsClassifier(
-                    n_neighbors=7,
-                    metric="minkowski"
-                ),
+                "KNN Regressor": {
+                    "n_neighbors": [3, 5, 7, 9],
+                    "weights": ["uniform", "distance"],
+                },
 
-                "XGBoost Regressor": XGBRegressor(
-                n_estimators=200,
-                learning_rate=0.05,
-                max_depth=6,
-                subsample=0.8,
-                colsample_bytree=0.8,
-                objective='reg:squarederror'
-                ),
+                "XGBoost Regressor": {
+                    "n_estimators": [100, 200],
+                    "learning_rate": [0.03, 0.05, 0.1],
+                    "max_depth": [3, 6, 10],
+                    "subsample": [0.7, 0.8],
+                },
 
-                "CatBoost Classifier": CatBoostClassifier(
-                    iterations=300,
-                    learning_rate=0.05,
-                    depth=6,
-                    verbose=False
-                ),
+                "CatBoost Regressor": {
+                    "depth": [4, 6, 8],
+                    "learning_rate": [0.03, 0.05],
+                    "iterations": [200, 300],
+                },
 
-                "AdaBoost Classifier": AdaBoostClassifier(
-                    n_estimators=150,
-                    learning_rate=0.05
-                ),
+                "AdaBoost Regressor": {
+                    "n_estimators": [50, 100, 150],
+                    "learning_rate": [0.03, 0.05, 0.1],
+                },
             }
 
 
-            model_report:dict = evaluate_models(X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, models=models)
+
+            model_report:dict = evaluate_models(X_train=X_train, y_train=y_train, X_test=X_test, y_test=y_test, models=models,param=params)
 
             best_model_score = max(sorted(model_report.values()))
 
