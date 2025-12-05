@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from src.pipeline.predict_pipeline import CustomData, PredictPipeline
+from src.pipeline.train_pipeline import train_pipeline
 
 app = Flask(__name__)
 
@@ -34,6 +35,22 @@ def predict_datapoint():
         result = predict_pipeline.predict(pred_df)
 
         return render_template('home.html', results=result[0])
+
+
+@app.route('/train', methods=['GET'])
+def train_model():
+    try:
+        best_model_name, best_score, best_params = train_pipeline()
+
+        return render_template(
+            'train_result.html',
+            model=best_model_name,
+            score=best_score,
+            params=best_params
+        )
+    except Exception as e:
+        return f"Training failed: {str(e)}"
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

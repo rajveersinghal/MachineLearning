@@ -1,0 +1,15 @@
+<html>
+<body>
+    <h1>Model Training Completed</h1>
+
+    <h2>Best Model: {{ model }}</h2>
+    <h3>R2 Score: {{ score }}</h3>
+
+    <h3>Best Hyperparameters:</h3>
+    <pre>{{ params }}</pre>
+
+    <a href="{{ url_for('index') }}">
+        <button class="btn btn-primary">Back to Home</button>
+    </a>
+</body>
+</html>

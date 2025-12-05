@@ -6,4 +6,5 @@ sckit-learn
 xgboost
 catboost
 dill
+flask
 -e .

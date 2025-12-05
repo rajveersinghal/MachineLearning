@@ -278,8 +278,13 @@
             </div>
         </form>
         <h2>
-            The Prediction is {{results}}
+            THE prediction is {{results}}
         </h2>
+        <div style="margin-top:20px;">
+            <a href="{{ url_for('train_model') }}" class="btn btn-success btn-lg">
+                Train Model
+            </a>
+        </div>
     </div>
 </body>
 </html>
