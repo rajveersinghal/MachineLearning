@@ -46,8 +46,8 @@ This project applies end-to-end machine learning techniques to understand factor
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/username/student-performance.git
-cd student-performance
+git clone https://github.com/rajveersinghal/StudentPerformance.git
+cd StudentPerformance
 ```
 
 ### Installation
@@ -64,11 +64,6 @@ cd student-performance
 4. Train models: `python src/model.py`
 5. View results and metrics in output files
 
-## Results
 
-[Add your model performance metrics and conclusions here]
 
-## License
-
-MIT
 
